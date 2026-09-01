@@ -1,0 +1,18 @@
+[project]
+name = "simulation-calibration"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Anton",email = "anton.nunez.seoane@uvigo.gal"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[tool.poetry]
+packages = [{include = "simulation_calibration", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
