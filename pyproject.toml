@@ -8,10 +8,17 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "optuna (>=4.9.0,<5.0.0)",
+    "numpy (>=2.5.2,<3.0.0)",
+    "matplotlib (>=3.11.1,<4.0.0)",
+    "scikit-learn (>=1.9.0,<2.0.0)"
 ]
 
 [tool.poetry]
 packages = [{include = "simulation_calibration", from = "src"}]
+
+[tool.poetry.scripts]
+simcal = "simulation_calibration.cli:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
