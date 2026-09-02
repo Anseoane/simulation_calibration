@@ -2,10 +2,12 @@ import optuna
 
 class Optimization:
     def __init__(self, objective):
-        pass
+        self.objective = objective
 
 
-    def run(self, optim_strategy):
-        pass
+    def optuna_run(self, n_trials):
 
-    def
+        study = optuna.create_study()
+        study.optimize(self.objective, n_trials=n_trials)
+
+        return study
