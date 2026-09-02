@@ -5,3 +5,5 @@
 This package provides the `simcal` utility, which can be used to calibrate microscopic traffic simulations running in sumo.
 
 The utility relies on optuna for the optimization process.
+
+The package is contained in this repository. Sample data can be found in a companion repository at _companion repo_
