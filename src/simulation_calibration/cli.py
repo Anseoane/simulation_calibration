@@ -1,5 +1,9 @@
 import argparse
 
+from . import demand
+
+
+
 def main():
     print("\nThe PhD was a mistake\n")
     print("Starting calibration process\n")
@@ -11,10 +15,12 @@ def main():
     )
     parser.add_argument("gt_data", type=str)
     parser.add_argument("network", type=str)
+    parser.add_argument("metadata", type=str)
     args = parser.parse_args()
 
-
-    print(args.gt_data)
+    gt_source_file = args.gt_data
+    sumo_network_file = args.network
+    metadata_file = args.metadata
 
 if __name__ == "__main__":
     main()
