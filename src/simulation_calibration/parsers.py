@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime, timedelta
+import itertools
 import json
 from statistics import fmean
 
@@ -50,17 +51,46 @@ class GroundTruth:
 
         return selected_records
 
-    def build_od_matrix(self, sinks_sources, t_start=None, t_end=None):
+    def build_od_matrix(self, segm_sinks_sources, t_start=None, t_end=None):
         t_start = _as_datetime(t_start)
         t_end = _as_datetime(t_end)
 
+        sinks = segm_sinks_sources["segm_sinks"]
+        sources = segm_sinks_sources["segm_sources"]
+
+
         selected_records = [
-            speeds
+            (dt, speeds)
             for dt, speeds in self.time_intervals.items()
             if (t_start is None or dt >= t_start)
             and (t_end is None or dt < t_end)
         ]
-        print(selected_records)
+
+        possible_od_pairs = list(itertools.product(sources, sinks))
+
+        weights_by_time = {}
+        od_matrix = {}
+        for record in selected_records:
+            speeds = record[1]
+            sink_speeds = [speeds[sink] for sink in sinks]
+            sink_weights = {
+                sink: speeds[sink] / sum(sink_speeds) for sink in sinks
+            }
+            od_matrix.setdefault(record[0], )
+
+            weights_by_time.setdefault(record[0], sink_weights)
+
+        od_matrix = {}
+        for record in selected_records:
+            od_matrix.setdefault(record[0], {})
+            for od_pair in possible_od_pairs:
+                weights = weights_by_time[record[0]]
+                od_matrix[record[0]].setdefault(od_pair, weights[od_pair[1]])
+                                     
+
+        print(od_matrix)
+
+        return od_matrix
 
 
 class Metadata:
@@ -74,14 +104,25 @@ class Metadata:
     def get_sinks_sources(self):
         sumo_sinks = []
         sumo_sources = []
-        for segm_info in self.segments.values():
+        segm_sinks = []
+        segm_sources = []
+
+        for segm_id, segm_info in self.segments.items():
+
             if segm_info["sink_source_role"] == "sink":
-                sumo_sink = segm_info["edges"][-1]
-                sumo_sinks.append(sumo_sink)
+                sumo_sinks.append(segm_info["edges"][-1])
+                segm_sinks.append(segm_id)
+
             elif segm_info["sink_source_role"] == "source":
-                sumo_source = segm_info["edges"][0]
-                sumo_sources.append(sumo_source)
+                sumo_sources.append(segm_info["edges"][0])
+                segm_sources.append(segm_id)
+
             else:
                 continue
-
-        return {"sinks": sumo_sinks, "sources": sumo_sources}
+            
+        return {
+            "sumo_sinks": sumo_sinks,
+            "sumo_sources": sumo_sources,
+            "segm_sources": segm_sources,
+            "segm_sinks": segm_sinks
+        }
